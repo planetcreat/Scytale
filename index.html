@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>로또 번호 추첨기</title>
+  <title>오늘 저녁 뭐 먹지?</title>
   <style>
     * {
       margin: 0;
@@ -16,27 +16,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      background: linear-gradient(135deg, #2d1b00, #5c2d00, #8b4513);
       font-family: 'Segoe UI', sans-serif;
     }
 
     .container {
       text-align: center;
       padding: 50px 40px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.07);
       border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      max-width: 520px;
+      max-width: 480px;
       width: 90%;
     }
 
     h1 {
       color: #fff;
-      font-size: 2rem;
+      font-size: 1.8rem;
       margin-bottom: 8px;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
     }
 
     .subtitle {
@@ -45,123 +45,167 @@
       margin-bottom: 40px;
     }
 
-    .balls {
+    .result-box {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      padding: 32px 24px;
+      margin-bottom: 32px;
+      min-height: 140px;
       display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-      min-height: 70px;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .ball {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
+    .menu-emoji {
+      font-size: 4rem;
+      margin-bottom: 12px;
+      display: block;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .menu-emoji.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .menu-name {
+      font-size: 1.8rem;
       font-weight: 800;
       color: #fff;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 -3px 8px rgba(0,0,0,0.2);
       opacity: 0;
-      transform: scale(0) rotate(-180deg);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transform: translateY(10px);
+      transition: all 0.4s ease 0.15s;
     }
 
-    .ball.show {
+    .menu-name.show {
       opacity: 1;
-      transform: scale(1) rotate(0deg);
+      transform: translateY(0);
     }
 
-    .ball.yellow { background: linear-gradient(145deg, #f9d423, #e6a817); }
-    .ball.blue   { background: linear-gradient(145deg, #4facfe, #1a7fdb); }
-    .ball.red    { background: linear-gradient(145deg, #f97316, #dc2626); }
-    .ball.gray   { background: linear-gradient(145deg, #9ca3af, #6b7280); }
-    .ball.green  { background: linear-gradient(145deg, #34d399, #059669); }
+    .menu-desc {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 8px;
+      opacity: 0;
+      transition: all 0.4s ease 0.25s;
+    }
+
+    .menu-desc.show {
+      opacity: 1;
+    }
+
+    .placeholder {
+      color: rgba(255,255,255,0.3);
+      font-size: 0.95rem;
+    }
 
     .btn {
       padding: 16px 48px;
       font-size: 1.1rem;
       font-weight: 700;
+      background: linear-gradient(135deg, #ff6b35, #f7931e);
       color: #fff;
-      background: linear-gradient(135deg, #f9d423, #e6a817);
-      color: #1a1a2e;
       border: none;
       border-radius: 50px;
       cursor: pointer;
       letter-spacing: 1px;
-      box-shadow: 0 8px 24px rgba(249, 212, 35, 0.4);
+      box-shadow: 0 8px 24px rgba(255, 107, 53, 0.4);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(249, 212, 35, 0.5);
+      box-shadow: 0 12px 32px rgba(255, 107, 53, 0.55);
     }
 
     .btn:active {
       transform: translateY(1px);
-      box-shadow: 0 4px 12px rgba(249, 212, 35, 0.3);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
     }
 
-    .result-text {
-      color: rgba(255,255,255,0.6);
-      font-size: 0.85rem;
-      margin-top: 28px;
-      min-height: 20px;
+    .again {
+      display: block;
+      margin-top: 20px;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
       letter-spacing: 0.5px;
+    }
+
+    .again:hover {
+      color: rgba(255,255,255,0.7);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🎱 로또 추첨기</h1>
-    <p class="subtitle">1 ~ 45 사이 번호 6개를 뽑습니다</p>
+    <h1>🍽️ 오늘 저녁 뭐 먹지?</h1>
+    <p class="subtitle">결정 장애 해결사</p>
 
-    <div class="balls" id="balls">
-      <span style="color:rgba(255,255,255,0.3); font-size:0.9rem;">버튼을 눌러 번호를 추첨하세요</span>
+    <div class="result-box" id="resultBox">
+      <p class="placeholder">버튼을 눌러 메뉴를 추천받으세요!</p>
     </div>
 
-    <button class="btn" onclick="draw()">번호 추첨!</button>
-
-    <p class="result-text" id="result"></p>
+    <button class="btn" onclick="recommend()">메뉴 추천받기</button>
+    <button class="again" onclick="recommend()" id="againBtn" style="display:none;">다른 메뉴 볼래요</button>
   </div>
 
   <script>
-    const COLORS = ['yellow', 'blue', 'red', 'gray', 'green'];
+    const menus = [
+      { emoji: '🍕', name: '피자', desc: '치즈가 쭈욱~ 늘어나는 그 맛' },
+      { emoji: '🍜', name: '라멘', desc: '진한 육수에 쫄깃한 면발' },
+      { emoji: '🍗', name: '치킨', desc: '오늘도 치킨은 옳다' },
+      { emoji: '🥩', name: '삼겹살', desc: '상추에 싸서 쌈장과 함께' },
+      { emoji: '🍱', name: '초밥', desc: '신선한 회와 촉촉한 밥' },
+      { emoji: '🍛', name: '카레', desc: '황금빛 카레 한 그릇' },
+      { emoji: '🍲', name: '부대찌개', desc: '얼큰하고 든든한 한 냄비' },
+      { emoji: '🥗', name: '샐러드', desc: '가볍고 건강하게!' },
+      { emoji: '🍔', name: '버거', desc: '패티가 두툼한 수제버거' },
+      { emoji: '🍣', name: '회덮밥', desc: '신선한 회에 고추장 쓱쓱' },
+      { emoji: '🥘', name: '파스타', desc: '크림 또는 토마토, 당신의 선택' },
+      { emoji: '🍤', name: '새우튀김', desc: '바삭바삭 황금빛 튀김' },
+      { emoji: '🫕', name: '샤브샤브', desc: '채소와 고기를 퐁당퐁당' },
+      { emoji: '🌮', name: '타코', desc: '살사소스와 아보카도의 조화' },
+      { emoji: '🍖', name: '족발', desc: '보쌈 한 점 곁들이면 금상첨화' },
+      { emoji: '🍝', name: '짜장면', desc: '검은 소스의 달콤 짭짤함' },
+      { emoji: '🥟', name: '만두', desc: '속이 꽉 찬 군만두 한 판' },
+      { emoji: '🍙', name: '김밥', desc: '참기름 향 솔솔 나는 한 줄' },
+      { emoji: '🫔', name: '쌀국수', desc: '향긋한 고수와 담백한 육수' },
+      { emoji: '🥚', name: '계란찜 + 된장찌개', desc: '집밥의 정석, 오늘은 집밥!' },
+    ];
 
-    function getBallColor(num) {
-      if (num <= 10) return 'yellow';
-      if (num <= 20) return 'blue';
-      if (num <= 30) return 'red';
-      if (num <= 40) return 'gray';
-      return 'green';
-    }
+    let last = -1;
 
-    function draw() {
-      const nums = [];
-      while (nums.length < 6) {
-        const n = Math.floor(Math.random() * 45) + 1;
-        if (!nums.includes(n)) nums.push(n);
-      }
-      nums.sort((a, b) => a - b);
+    function recommend() {
+      let idx;
+      do { idx = Math.floor(Math.random() * menus.length); } while (idx === last);
+      last = idx;
 
-      const container = document.getElementById('balls');
-      container.innerHTML = '';
+      const { emoji, name, desc } = menus[idx];
+      const box = document.getElementById('resultBox');
 
-      nums.forEach((num, i) => {
-        const ball = document.createElement('div');
-        ball.className = `ball ${getBallColor(num)}`;
-        ball.textContent = num;
-        container.appendChild(ball);
-        setTimeout(() => ball.classList.add('show'), i * 120);
+      box.innerHTML = `
+        <span class="menu-emoji" id="emoji">${emoji}</span>
+        <div class="menu-name" id="mname">${name}</div>
+        <div class="menu-desc" id="mdesc">${desc}</div>
+      `;
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.getElementById('emoji').classList.add('show');
+          document.getElementById('mname').classList.add('show');
+          document.getElementById('mdesc').classList.add('show');
+        });
       });
 
-      document.getElementById('result').textContent = `추첨 번호: ${nums.join(' · ')}`;
+      document.getElementById('againBtn').style.display = 'inline';
     }
   </script>
 </body>
