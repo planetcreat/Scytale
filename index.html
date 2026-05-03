@@ -3,210 +3,386 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>오늘 저녁 뭐 먹지?</title>
+  <title>아, 그래서 그랬구나</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #0e0e14;
+      --card-bg: #16161f;
+      --accent: #a78bfa;
+      --accent2: #7c3aed;
+      --text: #f1f0ff;
+      --muted: rgba(255,255,255,0.45);
+      --border: rgba(167,139,250,0.15);
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #2d1b00, #5c2d00, #8b4513);
-      font-family: 'Segoe UI', sans-serif;
     }
 
-    .container {
+    header {
       text-align: center;
-      padding: 50px 40px;
-      background: rgba(255, 255, 255, 0.07);
-      border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      max-width: 480px;
-      width: 90%;
+      padding: 60px 20px 36px;
     }
 
-    h1 {
-      color: #fff;
-      font-size: 1.8rem;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
+    header .label {
+      display: inline-block;
+      background: rgba(167,139,250,0.12);
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      margin-bottom: 18px;
     }
 
-    .subtitle {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 0.9rem;
-      margin-bottom: 40px;
-    }
-
-    .result-box {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 16px;
-      padding: 32px 24px;
-      margin-bottom: 32px;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .menu-emoji {
-      font-size: 4rem;
-      margin-bottom: 12px;
-      display: block;
-      opacity: 0;
-      transform: scale(0.5);
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .menu-emoji.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .menu-name {
-      font-size: 1.8rem;
+    header h1 {
+      font-size: 2.4rem;
       font-weight: 800;
-      color: #fff;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.4s ease 0.15s;
+      letter-spacing: -1px;
+      line-height: 1.2;
     }
 
-    .menu-name.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    header h1 span { color: var(--accent); }
 
-    .menu-desc {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.55);
-      margin-top: 8px;
-      opacity: 0;
-      transition: all 0.4s ease 0.25s;
-    }
-
-    .menu-desc.show {
-      opacity: 1;
-    }
-
-    .placeholder {
-      color: rgba(255,255,255,0.3);
+    header p {
+      color: var(--muted);
+      margin-top: 12px;
       font-size: 0.95rem;
+      line-height: 1.6;
     }
 
-    .btn {
-      padding: 16px 48px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #ff6b35, #f7931e);
+    .filter {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 0 20px 36px;
+    }
+
+    .filter button {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      padding: 7px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .filter button:hover,
+    .filter button.active {
+      background: var(--accent2);
+      border-color: var(--accent);
       color: #fff;
-      border: none;
-      border-radius: 50px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
       cursor: pointer;
-      letter-spacing: 1px;
-      box-shadow: 0 8px 24px rgba(255, 107, 53, 0.4);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.2s, border-color 0.2s;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(255, 107, 53, 0.55);
+    .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+
+    .card-inner {
+      padding: 28px 24px;
     }
 
-    .btn:active {
-      transform: translateY(1px);
-      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
     }
 
-    .again {
-      display: block;
-      margin-top: 20px;
-      color: rgba(255,255,255,0.4);
-      font-size: 0.8rem;
-      cursor: pointer;
-      text-decoration: underline;
+    .card-emoji {
+      font-size: 2.2rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .card-category {
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .card-question {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .reveal-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       background: none;
-      border: none;
-      letter-spacing: 0.5px;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 0.82rem;
+      padding: 7px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .again:hover {
-      color: rgba(255,255,255,0.7);
+    .reveal-btn:hover { background: rgba(167,139,250,0.1); border-color: var(--accent); }
+
+    .answer-box {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+
+    .answer-box.open {
+      max-height: 300px;
+    }
+
+    .answer-inner {
+      border-top: 1px solid var(--border);
+      margin-top: 16px;
+      padding-top: 16px;
+    }
+
+    .answer-label {
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+    }
+
+    .answer-text {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.7;
+    }
+
+    .aha {
+      display: inline-block;
+      margin-top: 12px;
+      background: rgba(167,139,250,0.12);
+      color: var(--accent);
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: rgba(255,255,255,0.2);
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🍽️ 오늘 저녁 뭐 먹지?</h1>
-    <p class="subtitle">결정 장애 해결사</p>
 
-    <div class="result-box" id="resultBox">
-      <p class="placeholder">버튼을 눌러 메뉴를 추천받으세요!</p>
+<header>
+  <div class="label">HIDDEN REASON</div>
+  <h1>아, <span>그래서 그랬구나</span></h1>
+  <p>평소엔 당연했는데, 알고 보면 이유가 있었던<br>생활 속 숨겨진 이야기들</p>
+</header>
+
+<div class="filter">
+  <button class="active" onclick="filterCards('all', this)">전체</button>
+  <button onclick="filterCards('생활', this)">생활</button>
+  <button onclick="filterCards('음식', this)">음식</button>
+  <button onclick="filterCards('교통', this)">교통</button>
+  <button onclick="filterCards('제품', this)">제품</button>
+  <button onclick="filterCards('건강', this)">건강</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>알고 나면 다시 보이는 세상 🔍</footer>
+
+<script>
+const facts = [
+  {
+    emoji: '✈️', category: '교통',
+    title: '이착륙 때 왜 창문 블라인드를 올릴까?',
+    question: '비행기가 뜨고 내릴 때 승무원이 꼭 블라인드를 올리라고 합니다.',
+    answer: '비상착륙 시 탈출해야 할 경우 승객과 구조대원 모두 창밖 상황을 빠르게 파악해야 하기 때문입니다. 눈이 밝은 환경에 미리 적응시키는 효과도 있습니다.',
+    aha: '안전을 위한 규칙이었군요'
+  },
+  {
+    emoji: '🖊️', category: '제품',
+    title: '볼펜 뚜껑에 왜 구멍이 있을까?',
+    question: '볼펜 뚜껑 위쪽에는 작은 구멍이 뚫려 있습니다. 잉크가 새지 않도록? 아니면 다른 이유?',
+    answer: '어린이가 실수로 삼켰을 때 기도를 막지 않도록 숨을 쉴 수 있게 만든 안전 설계입니다. ISO 11540 표준으로 정해진 규격입니다.',
+    aha: '생명을 구하는 작은 구멍'
+  },
+  {
+    emoji: '👖', category: '생활',
+    title: '청바지 앞 작은 주머니의 정체',
+    question: '청바지 오른쪽에 있는 그 작고 쓸모없어 보이는 주머니, 왜 만든 걸까요?',
+    answer: '1800년대 카우보이들이 회중시계를 넣으려고 만든 주머니입니다. 스마트폰 시대에도 리바이스가 전통으로 유지하고 있습니다.',
+    aha: '회중시계 주머니였군요'
+  },
+  {
+    emoji: '🪟', category: '교통',
+    title: '비행기 창문은 왜 둥글까?',
+    question: '여객기 창문은 모두 모서리가 둥근 타원형입니다. 디자인 때문일까요?',
+    answer: '네모난 창문은 모서리에 압력이 집중되어 균열이 생깁니다. 1950년대 두 번의 여객기 공중 폭발 사고 이후 모서리를 없앤 타원형으로 바뀌었습니다.',
+    aha: '사고에서 배운 설계였군요'
+  },
+  {
+    emoji: '🚗', category: '교통',
+    title: '연료 게이지 옆 작은 화살표',
+    question: '자동차 계기판 연료 표시 옆에 작은 삼각형 화살표가 있습니다. 혹시 알고 계셨나요?',
+    answer: '주유구가 어느 쪽에 있는지 알려주는 표시입니다. 렌터카나 처음 모는 차에서 헤매지 않아도 됩니다.',
+    aha: '이걸 왜 이제 알았지...'
+  },
+  {
+    emoji: '🏊', category: '생활',
+    title: '수영장 레인이 색이 다른 이유',
+    question: '수영장 레인 구분선을 보면 색이 번갈아가며 바뀌는 것을 볼 수 있습니다.',
+    answer: '선수들이 만들어내는 물살(난류)을 흡수해 인접 레인의 선수에게 영향을 줄이기 위한 장치입니다. 색이 다른 게 아니라 구조 자체가 다릅니다.',
+    aha: '파도막이였군요'
+  },
+  {
+    emoji: '🩹', category: '제품',
+    title: '식품 공장 밴드에이드가 파란색인 이유',
+    question: '식품을 다루는 공장 직원들은 반드시 파란색 밴드에이드를 사용해야 합니다.',
+    answer: '음식 안에 밴드에이드가 섞였을 때 쉽게 발견할 수 있게 하기 위해서입니다. 음식과 같은 색인 빨간색·살색 밴드에이드는 발견이 어렵습니다.',
+    aha: '위생 규정의 이유가 있었군요'
+  },
+  {
+    emoji: '🚁', category: '생활',
+    title: '고속도로 갓길 요철이 있는 이유',
+    question: '고속도로 차선 경계나 갓길에 있는 요철 구간, 타이어 소리가 유독 크게 납니다.',
+    answer: '졸음운전 중 차선을 이탈할 때 진동과 소음으로 운전자를 깨우는 럼블 스트립(rumble strip)입니다. 수천 명의 목숨을 살리는 설계입니다.',
+    aha: '졸음 알림 장치였군요'
+  },
+  {
+    emoji: '🍞', category: '음식',
+    title: '식빵 봉지 클립 색의 비밀',
+    question: '마트에서 파는 식빵 봉지를 묶는 플라스틱 클립, 색이 왜 다를까요?',
+    answer: '요일별로 납품 날짜를 표시합니다. 월(파랑), 화(초록), 목(빨강), 금(흰색), 토(노랑)처럼 색으로 구분해 직원이 오래된 제품을 빠르게 골라냅니다.',
+    aha: '유통기한 코드였군요'
+  },
+  {
+    emoji: '🪞', category: '생활',
+    title: '엘리베이터 안에 거울이 있는 이유',
+    question: '엘리베이터 내부 거울이 단순히 외모 확인용이라고 생각하셨나요?',
+    answer: '휠체어 사용자가 뒤로 나올 때 문을 보기 위한 것입니다. 좁은 공간에서 방향을 돌리기 어려운 분들이 뒤쪽을 확인할 수 있게 한 배려 설계입니다.',
+    aha: '배려의 거울이었군요'
+  },
+  {
+    emoji: '🧴', category: '제품',
+    title: '샴푸와 린스 뚜껑에 있는 작은 점',
+    question: '샴푸 뚜껑에는 작은 돌기나 점이 있고, 린스에는 없거나 위치가 다릅니다.',
+    answer: '시각장애인이 눈을 감고도 샴푸와 린스를 구별할 수 있도록 만든 촉각 표시입니다. 국제 배려 설계 표준 중 하나입니다.',
+    aha: '배려의 점이었군요'
+  },
+  {
+    emoji: '🥤', category: '음식',
+    title: '구부러지는 빨대는 왜 만들어졌을까?',
+    question: '음료수 빨대 중간에 구부러지는 부분이 있는 건 편의 때문일까요?',
+    answer: '1937년 병원에서 누운 환자가 고개를 들지 않고 음료를 마실 수 있도록 발명되었습니다. 이후 일반 제품으로 퍼졌습니다.',
+    aha: '환자를 위한 발명이었군요'
+  },
+  {
+    emoji: '🌡️', category: '건강',
+    title: '병원에서 혀 밑으로 체온을 재는 이유',
+    question: '체온계를 겨드랑이 말고 혀 아래에 넣으면 더 정확한 이유가 뭘까요?',
+    answer: '혀 아래에는 설하동맥이 지나가 신체 심부 온도에 가까운 온도를 측정할 수 있습니다. 겨드랑이는 외부 공기 영향을 받아 0.5°C 정도 낮게 나옵니다.',
+    aha: '혈관 바로 위였군요'
+  },
+  {
+    emoji: '🎬', category: '생활',
+    title: '영화관 팝콘이 비싼 진짜 이유',
+    question: '영화관 팝콘은 왜 마트의 5배 이상 비쌀까요? 폭리를 취하는 걸까요?',
+    answer: '영화관은 배급사에 티켓 수익 대부분을 내줘야 합니다. 팝콘·음료 같은 식음료가 실제 수익의 절반 이상입니다. 팝콘 없이는 영화관이 유지되기 어렵습니다.',
+    aha: '영화관을 살리는 팝콘이었군요'
+  },
+  {
+    emoji: '🔵', category: '생활',
+    title: '공공화장실 변기가 말발굽 모양인 이유',
+    question: '가정용 변기 시트는 O형인데 공공화장실은 앞이 뚫린 U형입니다.',
+    answer: '위생 때문입니다. 앞 부분이 뚫려 있어 소변이 튀어도 시트에 닿지 않고, 손을 댈 일이 줄어듭니다. 미국 위생 기준(ANSI)에서 공공장소에 U형을 권장합니다.',
+    aha: '위생 설계였군요'
+  },
+];
+
+function createCard(fact) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.category = fact.category;
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="card-top">
+        <div class="card-emoji">${fact.emoji}</div>
+        <div>
+          <div class="card-category">${fact.category}</div>
+          <div class="card-title">${fact.title}</div>
+        </div>
+      </div>
+      <div class="card-question">${fact.question}</div>
+      <button class="reveal-btn" onclick="toggle(this)">
+        <span>💡</span> 이유 알아보기
+      </button>
+      <div class="answer-box">
+        <div class="answer-inner">
+          <div class="answer-label">REASON</div>
+          <div class="answer-text">${fact.answer}</div>
+          <span class="aha">✨ ${fact.aha}</span>
+        </div>
+      </div>
     </div>
+  `;
+  return card;
+}
 
-    <button class="btn" onclick="recommend()">메뉴 추천받기</button>
-    <button class="again" onclick="recommend()" id="againBtn" style="display:none;">다른 메뉴 볼래요</button>
-  </div>
+function toggle(btn) {
+  const box = btn.nextElementSibling;
+  const open = box.classList.toggle('open');
+  btn.innerHTML = open
+    ? '<span>🔼</span> 접기'
+    : '<span>💡</span> 이유 알아보기';
+  btn.style.color = open ? 'rgba(255,255,255,0.4)' : '';
+}
 
-  <script>
-    const menus = [
-      { emoji: '🍕', name: '피자', desc: '치즈가 쭈욱~ 늘어나는 그 맛' },
-      { emoji: '🍜', name: '라멘', desc: '진한 육수에 쫄깃한 면발' },
-      { emoji: '🍗', name: '치킨', desc: '오늘도 치킨은 옳다' },
-      { emoji: '🥩', name: '삼겹살', desc: '상추에 싸서 쌈장과 함께' },
-      { emoji: '🍱', name: '초밥', desc: '신선한 회와 촉촉한 밥' },
-      { emoji: '🍛', name: '카레', desc: '황금빛 카레 한 그릇' },
-      { emoji: '🍲', name: '부대찌개', desc: '얼큰하고 든든한 한 냄비' },
-      { emoji: '🥗', name: '샐러드', desc: '가볍고 건강하게!' },
-      { emoji: '🍔', name: '버거', desc: '패티가 두툼한 수제버거' },
-      { emoji: '🍣', name: '회덮밥', desc: '신선한 회에 고추장 쓱쓱' },
-      { emoji: '🥘', name: '파스타', desc: '크림 또는 토마토, 당신의 선택' },
-      { emoji: '🍤', name: '새우튀김', desc: '바삭바삭 황금빛 튀김' },
-      { emoji: '🫕', name: '샤브샤브', desc: '채소와 고기를 퐁당퐁당' },
-      { emoji: '🌮', name: '타코', desc: '살사소스와 아보카도의 조화' },
-      { emoji: '🍖', name: '족발', desc: '보쌈 한 점 곁들이면 금상첨화' },
-      { emoji: '🍝', name: '짜장면', desc: '검은 소스의 달콤 짭짤함' },
-      { emoji: '🥟', name: '만두', desc: '속이 꽉 찬 군만두 한 판' },
-      { emoji: '🍙', name: '김밥', desc: '참기름 향 솔솔 나는 한 줄' },
-      { emoji: '🫔', name: '쌀국수', desc: '향긋한 고수와 담백한 육수' },
-      { emoji: '🥚', name: '계란찜 + 된장찌개', desc: '집밥의 정석, 오늘은 집밥!' },
-    ];
+function filterCards(cat, el) {
+  document.querySelectorAll('.filter button').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.card').forEach(c => {
+    c.style.display = (cat === 'all' || c.dataset.category === cat) ? '' : 'none';
+  });
+}
 
-    let last = -1;
-
-    function recommend() {
-      let idx;
-      do { idx = Math.floor(Math.random() * menus.length); } while (idx === last);
-      last = idx;
-
-      const { emoji, name, desc } = menus[idx];
-      const box = document.getElementById('resultBox');
-
-      box.innerHTML = `
-        <span class="menu-emoji" id="emoji">${emoji}</span>
-        <div class="menu-name" id="mname">${name}</div>
-        <div class="menu-desc" id="mdesc">${desc}</div>
-      `;
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          document.getElementById('emoji').classList.add('show');
-          document.getElementById('mname').classList.add('show');
-          document.getElementById('mdesc').classList.add('show');
-        });
-      });
-
-      document.getElementById('againBtn').style.display = 'inline';
-    }
-  </script>
+const grid = document.getElementById('grid');
+facts.forEach(f => grid.appendChild(createCard(f)));
+</script>
 </body>
 </html>
