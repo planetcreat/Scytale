@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로또 번호 추첨기</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      padding: 50px 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 520px;
+      width: 90%;
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+      margin-bottom: 40px;
+    }
+
+    .balls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      min-height: 70px;
+      align-items: center;
+    }
+
+    .ball {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 -3px 8px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: scale(0) rotate(-180deg);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .ball.show {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+
+    .ball.yellow { background: linear-gradient(145deg, #f9d423, #e6a817); }
+    .ball.blue   { background: linear-gradient(145deg, #4facfe, #1a7fdb); }
+    .ball.red    { background: linear-gradient(145deg, #f97316, #dc2626); }
+    .ball.gray   { background: linear-gradient(145deg, #9ca3af, #6b7280); }
+    .ball.green  { background: linear-gradient(145deg, #34d399, #059669); }
+
+    .btn {
+      padding: 16px 48px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #f9d423, #e6a817);
+      color: #1a1a2e;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      box-shadow: 0 8px 24px rgba(249, 212, 35, 0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(249, 212, 35, 0.5);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 12px rgba(249, 212, 35, 0.3);
+    }
+
+    .result-text {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      margin-top: 28px;
+      min-height: 20px;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎱 로또 추첨기</h1>
+    <p class="subtitle">1 ~ 45 사이 번호 6개를 뽑습니다</p>
+
+    <div class="balls" id="balls">
+      <span style="color:rgba(255,255,255,0.3); font-size:0.9rem;">버튼을 눌러 번호를 추첨하세요</span>
+    </div>
+
+    <button class="btn" onclick="draw()">번호 추첨!</button>
+
+    <p class="result-text" id="result"></p>
+  </div>
+
+  <script>
+    const COLORS = ['yellow', 'blue', 'red', 'gray', 'green'];
+
+    function getBallColor(num) {
+      if (num <= 10) return 'yellow';
+      if (num <= 20) return 'blue';
+      if (num <= 30) return 'red';
+      if (num <= 40) return 'gray';
+      return 'green';
+    }
+
+    function draw() {
+      const nums = [];
+      while (nums.length < 6) {
+        const n = Math.floor(Math.random() * 45) + 1;
+        if (!nums.includes(n)) nums.push(n);
+      }
+      nums.sort((a, b) => a - b);
+
+      const container = document.getElementById('balls');
+      container.innerHTML = '';
+
+      nums.forEach((num, i) => {
+        const ball = document.createElement('div');
+        ball.className = `ball ${getBallColor(num)}`;
+        ball.textContent = num;
+        container.appendChild(ball);
+        setTimeout(() => ball.classList.add('show'), i * 120);
+      });
+
+      document.getElementById('result').textContent = `추첨 번호: ${nums.join(' · ')}`;
+    }
+  </script>
+</body>
+</html>
